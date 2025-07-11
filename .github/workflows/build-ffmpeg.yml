@@ -1,0 +1,83 @@
+name: Build FFmpeg
+
+on:
+  push:
+    branches: [ main ]
+  workflow_dispatch:
+
+jobs:
+  linux-build:
+    runs-on: ubuntu-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          sudo apt update
+          sudo apt install -y autoconf automake build-essential cmake git libtool nasm yasm pkg-config
+
+      - name: Clone FFmpeg
+        run: |
+          git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+          cd ffmpeg
+          ./configure --prefix=$HOME/ffmpeg-linux --enable-static --disable-shared
+          make -j$(nproc)
+          make install
+
+      - name: Upload Linux Binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: ffmpeg-linux
+          path: ~/ffmpeg-linux/bin/ffmpeg
+
+  windows-build:
+    runs-on: windows-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        shell: bash
+        run: |
+          choco install -y make git
+          git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+
+      - name: Build FFmpeg (Windows - MinGW)
+        shell: bash
+        run: |
+          cd ffmpeg
+          ./configure --prefix=$HOME/ffmpeg-win --target-os=mingw32 --arch=x86_64 --cross-prefix=x86_64-w64-mingw32- --enable-static --disable-shared
+          make -j$(nproc)
+          make install
+
+      - name: Upload Windows Binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: ffmpeg-windows
+          path: ~/ffmpeg-win/bin/ffmpeg.exe
+
+  macos-build:
+    runs-on: macos-latest
+    steps:
+      - name: Checkout
+        uses: actions/checkout@v3
+
+      - name: Install Dependencies
+        run: |
+          brew install automake fdk-aac git lame libass libtool libvorbis libvpx opus sdl2 x264 x265 xvid nasm yasm pkg-config
+
+      - name: Clone FFmpeg
+        run: |
+          git clone https://git.ffmpeg.org/ffmpeg.git ffmpeg
+          cd ffmpeg
+          ./configure --prefix=$HOME/ffmpeg-macos --enable-static --disable-shared
+          make -j$(sysctl -n hw.ncpu)
+          make install
+
+      - name: Upload macOS Binary
+        uses: actions/upload-artifact@v3
+        with:
+          name: ffmpeg-macos
+          path: ~/ffmpeg-macos/bin/ffmpeg
+
