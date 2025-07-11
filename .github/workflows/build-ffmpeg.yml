@@ -10,7 +10,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Dependencies
         run: |
@@ -26,7 +26,7 @@ jobs:
           make install
 
       - name: Upload Linux Binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-linux
           path: ~/ffmpeg-linux/bin/ffmpeg
@@ -35,7 +35,7 @@ jobs:
     runs-on: windows-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Dependencies
         shell: bash
@@ -52,7 +52,7 @@ jobs:
           make install
 
       - name: Upload Windows Binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-windows
           path: ~/ffmpeg-win/bin/ffmpeg.exe
@@ -61,7 +61,7 @@ jobs:
     runs-on: macos-latest
     steps:
       - name: Checkout
-        uses: actions/checkout@v3
+        uses: actions/checkout@v4
 
       - name: Install Dependencies
         run: |
@@ -76,7 +76,7 @@ jobs:
           make install
 
       - name: Upload macOS Binary
-        uses: actions/upload-artifact@v3
+        uses: actions/upload-artifact@v4
         with:
           name: ffmpeg-macos
           path: ~/ffmpeg-macos/bin/ffmpeg
